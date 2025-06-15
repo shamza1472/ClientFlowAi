@@ -1,0 +1,178 @@
+# ClientFlow AI – Project Blueprint
+
+## Overview
+ClientFlow AI is a lightweight, AI‑powered customer‑success assistant that helps CSMs respond faster, understand sentiment, and stay organized.
+
+## Current Status: ~90% Complete
+✅ **Phase 1-4B Complete**: Full UI + Data + Responsive + Client Management + Manual Content Creation
+🎯 **Current Focus**: Phase 5A - Enhanced UX & Authentication
+⚡ **Features**: Fully responsive with complete client management and manual content creation system
+
+## Folder Structure
+```bash
+clientflow-ai/
+├── public/          # Static assets
+├── src/
+│   ├── components/  # Reusable UI elements ✅
+│   ├── pages/       # Dashboard, Login, Settings ✅
+│   ├── features/    # Summary, DraftResponse, HealthScore ✅
+│   ├── lib/         # Utils, data management, types
+│   ├── hooks/       # Custom React hooks
+│   ├── styles/      # Tailwind configuration ✅
+│   └── main.tsx     # App entry point ✅
+├── .env             # API keys (future)
+├── tailwind.config.js ✅
+├── vite.config.ts ✅
+└── README.md
+```
+
+## Key Features
+- **Manual Email Summaries** – structured note-taking + action points
+- **Draft Response Templates** – reusable templates with customization
+- **Client Health Tracking** – manual scoring with visual indicators
+- **Conversation Management** – full CRUD operations with search/filter
+
+## Wireframe Snapshot
+```
++----------------------------------------------------+
+| Summary | Health Score | Draft Response           |
++----------------------------------------------------+
+| Recent Conversations                               |
++----------------------------------------------------+
+```
+Mobile view stacks these blocks vertically.
+
+## Development Roadmap
+
+### ✅ Phase 1 – Setup (COMPLETE)
+1. ✅ Init React + Vite + Tailwind
+2. ✅ Scaffold pages and basic layout
+3. ✅ Install UI library (Radix + shadcn/ui)
+
+### ✅ Phase 2 – UI Foundation (COMPLETE)
+1. ✅ Build all feature components with mock data
+2. ✅ Implement responsive dashboard layout
+3. ✅ Create settings page structure
+
+### ✅ Phase 3 – Data Management (COMPLETE)
+**Priority: High | Cursor-Friendly: ✅**
+
+#### ✅ 3A. Core Data Architecture (COMPLETE)
+- ✅ Create TypeScript interfaces/types for all data models
+- ✅ Set up Zustand for state management with devtools
+- ✅ Implement localStorage persistence layer with validation
+- ✅ Create data validation with Zod schemas
+- ✅ Build mock data generators for prototype development
+- ✅ Create StoreProvider for initialization
+
+#### ✅ 3B. Conversation System (COMPLETE - PROTOTYPE MODE)
+- ✅ Connect RecentConversations component to Zustand store
+- ✅ Add conversation creation form (paste email content)
+- ✅ Implement delete functionality with mock data persistence
+- ✅ Add enhanced search functionality with tag support
+- ✅ Enable mark as read/unread functionality
+- ✅ Add loading states and empty states
+- ✅ Connect HealthScore component to real client data
+
+### ✅ Phase 3C – Responsive Design Fixes (COMPLETE - UPDATED)
+**Priority: Critical | Cursor-Friendly: ✅**
+*Fixed UI responsiveness across all device types*
+
+#### ✅ 3C. Cross-Platform Responsiveness (COMPLETE)
+- ✅ Fix login page mobile view issues - proper responsive text/spacing
+- ✅ Resolve post-login tab view problems - improved dashboard grid layout
+- ✅ Implement proper responsive breakpoints for Web/Mobile/Tablet
+- ✅ Fix dashboard layout for mobile devices - mobile-first approach
+- ✅ Ensure conversation forms work on all screen sizes - responsive grid forms
+- ✅ Test and fix navigation/sidebar on different devices - mobile search toggle
+- ✅ **UPDATED**: Fixed inconsistent responsive breakpoints (lg: vs md:)
+- ✅ **UPDATED**: Improved login page scaling from mobile to desktop view
+- ✅ **UPDATED**: Fixed sidebar and header breakpoints for proper desktop display
+- ✅ **UPDATED**: Enhanced dashboard grid layout for better desktop experience
+
+### 🎯 Phase 4 – Core Functionality (IN PROGRESS)
+**Priority: High | Cursor-Friendly: ✅**
+
+#### ✅ 4A. Client Management (COMPLETE)
+- ✅ Create client profiles with contact information
+- ✅ Build client health score manual input system
+- ✅ Add client interaction timeline view
+- ✅ Implement client relationship tracking
+
+#### 4B. Manual Content Creation (COMPLETE)
+- ✅ Replace "AI Summary" with structured note templates
+- ✅ Create action item tracking with due dates  
+- ✅ Build response template library with categories
+- ✅ Add copy/paste functionality for quick responses
+
+### 🔧 Phase 5 – Enhanced UX (LATER)
+**Priority: Medium | Cursor-Friendly: ⚠️** 
+*Some features require careful UX consideration*
+
+#### 5A. Authentication & Security
+- [ ] Make login page functional with localStorage auth
+- [ ] Add user session management
+- [ ] Implement settings persistence
+
+#### 5B. Advanced Features  
+- [ ] Calendar integration for follow-up scheduling
+- [ ] Export functionality (CSV, PDF reports)
+- [ ] Email template versioning system
+- [ ] Bulk operations for conversations
+
+### 📊 Phase 6 – Analytics & Reporting
+**Priority: Medium | Cursor-Friendly: ✅**
+
+#### 6A. Data Visualization
+- [ ] Client health score trend charts (using Recharts)
+- [ ] Conversation volume dashboards
+- [ ] Response time tracking
+- [ ] Client risk assessment reports
+
+#### 6B. Performance Tracking
+- [ ] Manual KPI input forms
+- [ ] Goal setting and progress tracking
+- [ ] Team performance comparisons
+
+### 🤖 Phase 7 – AI Integration (FUTURE)
+**Priority: Low | Cursor-Friendly: ⚠️**
+*Requires API integration and error handling*
+
+#### 7A. OpenAI Setup
+- [ ] Environment configuration for API keys
+- [ ] OpenAI client setup with rate limiting
+- [ ] Error handling and fallback systems
+
+#### 7B. AI Features
+- [ ] Email summarization with OpenAI
+- [ ] Sentiment analysis implementation
+- [ ] Draft response generation
+- [ ] Smart health score calculation
+
+### 🚀 Phase 8 – Deployment (FINAL)
+**Priority: Low | Cursor-Friendly: ✅**
+
+#### 8A. Production Setup
+- [ ] Configure Vercel/Netlify deployment
+- [ ] Environment variables management
+- [ ] Performance optimization
+- [ ] Error monitoring setup
+
+---
+
+## 🎯 IMMEDIATE NEXT STEPS (ENHANCED UX MODE)
+1. ✅ **Phase 1-4B**: All core functionality complete
+2. 🎯 **Phase 5A**: Authentication & User Session Management
+3. **Phase 5B**: Calendar Integration & Export Features
+4. **Phase 6A**: Analytics Dashboard & Data Visualization
+
+**Ready for Production**: Core CSM workflow tools are fully functional!
+
+## 💡 Cursor Development Notes
+- **✅ Cursor-Friendly**: Well-defined, incremental tasks
+- **⚠️ Cursor-Caution**: Requires design decisions or complex logic
+- Focus on **data structure first**, then **functionality**, then **polish**
+- Each phase builds logically on the previous one
+- Prioritize **user value** over **technical complexity**
+
+Focus: **functional tool first, AI enhancement later**.
