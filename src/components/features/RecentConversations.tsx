@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Search, ExternalLink, Calendar, Eye, EyeOff, Plus } from 'lucide-react';
+import { MessageSquare, Search, ExternalLink, Calendar, Eye, EyeOff } from 'lucide-react';
 import { useConversations } from '@/lib/store';
 import { getPriorityColor, getSentimentColor } from '@/lib/data-utils';
 import { ConversationForm } from './ConversationForm';

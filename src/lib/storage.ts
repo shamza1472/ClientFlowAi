@@ -1,138 +1,96 @@
-import type { 
-  Conversation, 
-  Client, 
-  EmailSummary, 
-  ActionItem, 
-  ResponseTemplate, 
-  UserSettings,
-  AppState 
-} from './types';
 import { 
-  validateConversation, 
-  validateClient, 
-  validateActionItem, 
-  validateUserSettings 
-} from './validations';
+  Client, 
+  Conversation, 
+  ActionItem,
+  EmailSummary,
+  ResponseTemplate,
+  UserSettings
+} from './types';
 
 // Storage keys
 const STORAGE_KEYS = {
   CONVERSATIONS: 'clientflow_conversations',
   CLIENTS: 'clientflow_clients',
-  SUMMARIES: 'clientflow_summaries',
   ACTION_ITEMS: 'clientflow_action_items',
+  SUMMARIES: 'clientflow_summaries',
   RESPONSE_TEMPLATES: 'clientflow_response_templates',
   SETTINGS: 'clientflow_settings',
   UI_STATE: 'clientflow_ui_state',
 } as const;
 
-// Storage utility functions
-class Storage {
-  private static isClient = typeof window !== 'undefined';
-
-  private static safeStringify(data: any): string {
-    try {
-      return JSON.stringify(data, (key, value) => {
-        // Handle Date objects
-        if (value instanceof Date) {
-          return { __type: 'Date', value: value.toISOString() };
-        }
-        return value;
-      });
-    } catch (error) {
-      console.error('Error stringifying data:', error);
-      return '{}';
-    }
-  }
-
-  private static safeParse<T>(data: string): T | null {
-    try {
-      return JSON.parse(data, (key, value) => {
-        // Restore Date objects
-        if (value && typeof value === 'object' && value.__type === 'Date') {
-          return new Date(value.value);
-        }
-        return value;
-      });
-    } catch (error) {
-      console.error('Error parsing stored data:', error);
-      return null;
-    }
-  }
-
-  static get<T>(key: string): T | null {
-    if (!this.isClient) return null;
-    
+// Helper functions for localStorage operations
+const storageHelpers = {
+  // Get data from localStorage
+  get: <T>(key: string): T | null => {
     try {
       const item = localStorage.getItem(key);
       if (!item) return null;
       
-      return this.safeParse<T>(item);
+      return JSON.parse(item, (_key, value) => {
+        // Handle Date objects
+        if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
+          return new Date(value);
+        }
+        return value;
+      });
     } catch (error) {
-      console.error(`Error reading from localStorage for key ${key}:`, error);
+      console.error(`Error reading from localStorage:`, error);
       return null;
     }
-  }
+  },
 
-  static set<T>(key: string, data: T): boolean {
-    if (!this.isClient) return false;
-    
+  // Set data to localStorage
+  set: <T>(key: string, data: T): boolean => {
     try {
-      const serialized = this.safeStringify(data);
+      const serialized = JSON.stringify(data, (_key, value) => {
+        // Handle Date objects
+        if (value instanceof Date) {
+          return value.toISOString();
+        }
+        return value;
+      });
+      
       localStorage.setItem(key, serialized);
       return true;
     } catch (error) {
-      console.error(`Error writing to localStorage for key ${key}:`, error);
+      console.error(`Error writing to localStorage:`, error);
       return false;
     }
-  }
+  },
 
-  static remove(key: string): boolean {
-    if (!this.isClient) return false;
-    
+  // Remove data from localStorage
+  remove: (key: string): boolean => {
     try {
       localStorage.removeItem(key);
       return true;
     } catch (error) {
-      console.error(`Error removing from localStorage for key ${key}:`, error);
+      console.error(`Error removing from localStorage:`, error);
       return false;
     }
-  }
+  },
 
-  static clear(): boolean {
-    if (!this.isClient) return false;
-    
+  // Clear all app data
+  clear: (): boolean => {
     try {
-      // Only clear our app's keys
       Object.values(STORAGE_KEYS).forEach(key => {
         localStorage.removeItem(key);
       });
       return true;
     } catch (error) {
-      console.error('Error clearing localStorage:', error);
+      console.error(`Error clearing localStorage:`, error);
       return false;
     }
   }
-}
+};
 
 // Conversation storage
 export const conversationStorage = {
   getAll(): Conversation[] {
-    const conversations = Storage.get<Conversation[]>(STORAGE_KEYS.CONVERSATIONS);
-    if (!conversations) return [];
-    
-    // Validate each conversation
-    return conversations.filter(conv => {
-      const result = validateConversation(conv);
-      if (!result.success) {
-        console.warn('Invalid conversation data:', result.error);
-        return false;
-      }
-      return true;
-    });
+    return storageHelpers.get<Conversation[]>(STORAGE_KEYS.CONVERSATIONS) || [];
   },
 
   save(conversations: Conversation[]): boolean {
-    return Storage.set(STORAGE_KEYS.CONVERSATIONS, conversations);
+    return storageHelpers.set(STORAGE_KEYS.CONVERSATIONS, conversations);
   },
 
   add(conversation: Conversation): boolean {
@@ -171,21 +129,11 @@ export const conversationStorage = {
 // Client storage
 export const clientStorage = {
   getAll(): Client[] {
-    const clients = Storage.get<Client[]>(STORAGE_KEYS.CLIENTS);
-    if (!clients) return [];
-    
-    return clients.filter(client => {
-      const result = validateClient(client);
-      if (!result.success) {
-        console.warn('Invalid client data:', result.error);
-        return false;
-      }
-      return true;
-    });
+    return storageHelpers.get<Client[]>(STORAGE_KEYS.CLIENTS) || [];
   },
 
   save(clients: Client[]): boolean {
-    return Storage.set(STORAGE_KEYS.CLIENTS, clients);
+    return storageHelpers.set(STORAGE_KEYS.CLIENTS, clients);
   },
 
   add(client: Client): boolean {
@@ -224,21 +172,11 @@ export const clientStorage = {
 // Action Items storage
 export const actionItemStorage = {
   getAll(): ActionItem[] {
-    const items = Storage.get<ActionItem[]>(STORAGE_KEYS.ACTION_ITEMS);
-    if (!items) return [];
-    
-    return items.filter(item => {
-      const result = validateActionItem(item);
-      if (!result.success) {
-        console.warn('Invalid action item data:', result.error);
-        return false;
-      }
-      return true;
-    });
+    return storageHelpers.get<ActionItem[]>(STORAGE_KEYS.ACTION_ITEMS) || [];
   },
 
   save(items: ActionItem[]): boolean {
-    return Storage.set(STORAGE_KEYS.ACTION_ITEMS, items);
+    return storageHelpers.set(STORAGE_KEYS.ACTION_ITEMS, items);
   },
 
   add(item: ActionItem): boolean {
@@ -268,20 +206,11 @@ export const actionItemStorage = {
 // Settings storage
 export const settingsStorage = {
   get(): UserSettings | null {
-    const settings = Storage.get<UserSettings>(STORAGE_KEYS.SETTINGS);
-    if (!settings) return null;
-    
-    const result = validateUserSettings(settings);
-    if (!result.success) {
-      console.warn('Invalid settings data:', result.error);
-      return null;
-    }
-    
-    return settings;
+    return storageHelpers.get<UserSettings>(STORAGE_KEYS.SETTINGS);
   },
 
   save(settings: UserSettings): boolean {
-    return Storage.set(STORAGE_KEYS.SETTINGS, settings);
+    return storageHelpers.set(STORAGE_KEYS.SETTINGS, settings);
   },
 
   getDefault(): UserSettings {
@@ -306,7 +235,7 @@ export const settingsStorage = {
 // UI State storage
 export const uiStateStorage = {
   get() {
-    return Storage.get<{
+    return storageHelpers.get<{
       sidebarOpen: boolean;
       activeTab: string;
       selectedConversation?: string;
@@ -320,46 +249,26 @@ export const uiStateStorage = {
     selectedConversation?: string;
     selectedClient?: string;
   }): boolean {
-    return Storage.set(STORAGE_KEYS.UI_STATE, uiState);
+    return storageHelpers.set(STORAGE_KEYS.UI_STATE, uiState);
   }
 };
 
-// Summary and Template storage (simpler implementations)
+// Summary and Template storage
 export const summaryStorage = {
   getAll(): EmailSummary[] {
-    return Storage.get<EmailSummary[]>(STORAGE_KEYS.SUMMARIES) || [];
+    return storageHelpers.get<EmailSummary[]>(STORAGE_KEYS.SUMMARIES) || [];
   },
   save(summaries: EmailSummary[]): boolean {
-    return Storage.set(STORAGE_KEYS.SUMMARIES, summaries);
+    return storageHelpers.set(STORAGE_KEYS.SUMMARIES, summaries);
   }
 };
 
 export const templateStorage = {
   getAll(): ResponseTemplate[] {
-    return Storage.get<ResponseTemplate[]>(STORAGE_KEYS.RESPONSE_TEMPLATES) || [];
+    return storageHelpers.get<ResponseTemplate[]>(STORAGE_KEYS.RESPONSE_TEMPLATES) || [];
   },
   save(templates: ResponseTemplate[]): boolean {
-    return Storage.set(STORAGE_KEYS.RESPONSE_TEMPLATES, templates);
-  }
-};
-
-// Migration utility for future schema changes
-export const migration = {
-  getCurrentVersion(): number {
-    return Storage.get<number>('clientflow_version') || 1;
-  },
-
-  setVersion(version: number): boolean {
-    return Storage.set('clientflow_version', version);
-  },
-
-  migrate(): void {
-    const currentVersion = this.getCurrentVersion();
-    
-    // Future migrations would go here
-    if (currentVersion < 2) {
-      // Migration logic for version 2
-    }
+    return storageHelpers.set(STORAGE_KEYS.RESPONSE_TEMPLATES, templates);
   }
 };
 
@@ -372,6 +281,5 @@ export const storage = {
   summaries: summaryStorage,
   templates: templateStorage,
   uiState: uiStateStorage,
-  migration,
-  clear: Storage.clear,
+  clear: storageHelpers.clear,
 }; 

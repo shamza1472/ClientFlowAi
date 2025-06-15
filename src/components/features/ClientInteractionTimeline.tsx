@@ -144,7 +144,7 @@ export function ClientInteractionTimeline({ client, conversations }: ClientInter
               <div className="absolute left-8 top-0 bottom-0 w-px bg-slate-700"></div>
               
               <div className="space-y-6">
-                {timelineItems.map((item, index) => {
+                {timelineItems.map((item) => {
                   const Icon = item.icon;
                   const isConversation = item.type === 'conversation';
                   const conversation = isConversation ? item.data as Conversation : null;

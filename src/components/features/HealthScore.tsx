@@ -1,23 +1,24 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { TrendingDown, TrendingUp, Minus, Heart, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, Heart, Minus } from 'lucide-react';
 import { useClients } from '@/lib/store';
-import { getHealthStatusColor } from '@/lib/data-utils';
 
 export function HealthScore() {
-  const { clients, loading, atRiskClients } = useClients();
+  const { clients } = useClients();
+
+  // Calculate average health score
+  const averageHealth = clients.length > 0 
+    ? Math.round(clients.reduce((sum, client) => sum + client.healthScore.score, 0) / clients.length)
+    : 0;
+
+  // Count clients at risk (health score < 60)
+  const clientsAtRisk = clients.filter(client => client.healthScore.score < 60).length;
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-400';
     if (score >= 60) return 'text-yellow-400';
     return 'text-red-400';
-  };
-
-  const getProgressColor = (score: number) => {
-    if (score >= 80) return 'bg-green-500';
-    if (score >= 60) return 'bg-yellow-500';
-    return 'bg-red-500';
   };
 
   const getStatusBadge = (status: string) => {
@@ -59,11 +60,7 @@ export function HealthScore() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-slate-400">Loading clients...</div>
-            </div>
-          ) : clients.length === 0 ? (
+          {clients.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Heart className="h-12 w-12 text-slate-600 mb-4" />
               <div className="text-slate-400 mb-2">No clients found</div>
@@ -108,14 +105,12 @@ export function HealthScore() {
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
               <div className="text-lg font-bold text-green-400">
-                {clients.length > 0 
-                  ? Math.round(clients.reduce((sum, client) => sum + client.healthScore.score, 0) / clients.length)
-                  : 0}%
+                {averageHealth}%
               </div>
               <div className="text-xs text-slate-400">Avg Health</div>
             </div>
             <div>
-              <div className="text-lg font-bold text-red-400">{atRiskClients.length}</div>
+              <div className="text-lg font-bold text-red-400">{clientsAtRisk}</div>
               <div className="text-xs text-slate-400">At Risk</div>
             </div>
           </div>
